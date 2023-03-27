@@ -1,0 +1,141 @@
+<html xmlns=http://www.w3.org/1999/xhtml xmlns:th=http://www.thymeleaf.org>
+<body>
+
+<div th:fragment="configurationNtp" class="tab-pane fade"
+     th:classappend="${(tab == 'config-ntp-tab' ? 'active' : '') + (tab == 'config-ntp-tab' ? ' show' : '')}"
+     role="tabpanel" id="config-ntp-tab">
+
+    <div class="info-text pt-4 ps-4 pe-4">
+        <div>Current date and local time: {{ serverTime.date }} {{ serverTime.time }}</div>
+        <div>Current time (UTC): {{ serverTime.timeUTC }}Z</div>
+    </div>
+
+    <div class="pt-4 ps-4 pe-4">
+        <label class="info-text form-label">Synchronize clock with NTP server</label>
+        <div class="form-check form-switch">
+            <input id="ntp-selected-checkbox" type="checkbox"
+                   class="form-check-input shadow-none" role="switch"
+                   v-model="ntpActive" @click="$event.target.blur()">
+            <label class="info-text form-check-label" for="ntp-selected-checkbox">{{ ntpCheckLabel }}</label>
+        </div>
+    </div>
+    <div v-show="client.timeSettings.ntp.active" class="pt-2 ps-4 pe-4">
+        <div class="row">
+            <div class="info-text col-6">
+                NTP Server
+            </div>
+        </div>
+        <div class="pt-2 row" v-show="!client.timeSettings.ntp.editMode">
+            <div>
+                <a id="change-ntp-address-button" class="btn btn-light" style="width: 190px"
+                   v-on:click.prevent="toggleEditNtpServers()" href="#">
+                    Add NTP server(s)</a>
+            </div>
+        </div>
+        <div class="pt-2 row" v-show="client.timeSettings.ntp.editMode">
+            <div>
+                <a id="save-ntp-address-button" class="btn btn-light" style="width: 100px"
+                   v-on:click.prevent="saveNtpServers()" href="#">
+                    Save</a>
+                <a id="cancel-edit-ntp-address-button" class="btn btn-light" style="width: 100px"
+                   v-on:click.prevent="cancelEditNtpServers()" href="#">
+                    Cancel</a>
+            </div>
+        </div>
+        <div v-show="client.timeSettings.ntp.active" class="pt-2 row">
+            <div class="col-6">
+                <table id="ntp-servers-table" class="table table-hover">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th>Type</th>
+                        <th>Address</th>
+                        <th v-if="client.timeSettings.ntp.editMode">Actions</th>
+                    </tr>
+                    </thead>
+                    <tr is="ntp-server-row" v-for="(server, index) in client.timeSettings.ntp.servers"
+                        :key="index"
+                        :index="index" :server="server"
+                        :edit="client.timeSettings.ntp.editMode">
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div v-show="client.timeSettings.ntp.active" class="row">
+            <div v-show="client.timeSettings.ntp.editMode">
+                <a id="add-ntp-server-button" class="btn btn-light" style="width: 180px"
+                   v-on:click.prevent="addNtpServer()" href="#">
+                    Add Server</a>
+            </div>
+        </div>
+    </div>
+    <div v-show="client.timeSettings.ntp.active" class="ps-4 pe-4">
+        <label class="info-text form-label">Synchronization status</label>
+        <div class="statusLight" style="white-space: pre-line;">
+            <span :class="syncStatusClass"></span>{{ syncStatusLabel }}
+        </div>
+    </div>
+
+    <div class="pt-2 ps-4 pe-4 row" v-show="!ntpActive">
+        <div :id="datePickerId">
+            <a id="set-date-time-manually-button" href="#"
+               class="btn btn-light" style="width: 260px">
+                SET DATE & TIME MANUALLY</a>
+        </div>
+    </div>
+    <div class="pt-2 ps-4 pe-4 row" v-if="ntpActive">
+        <div>
+            <a id="set-date-time-manually-disabled-button" href="#"
+               class="btn btn-light disabled" style="width: 250px">
+                SET DATE & TIME MANUALLY</a>
+        </div>
+    </div>
+
+    <div class="pt-4 ps-4 pe-4">
+        <div class="row">
+            <div class="info-text col-6">
+                Time zone
+            </div>
+        </div>
+        <div v-show="!client.timeSettings.timeZone.editMode" class="row">
+            <div class="info-text">
+                (UTC{{ serverTime.timezone.offset }}) {{ serverTime.timezone.id }}, {{ serverTime.timezone.name }}
+            </div>
+        </div>
+        <div v-show="client.timeSettings.timeZone.editMode" class="row">
+            <div class="col-6">
+                <select id="select-timezone" name="template" class="form-select"
+                        v-model="client.timeSettings.timeZone.selectedTimeZone"
+                        :disabled="!client.timeSettings.timeZone.editMode"
+                        aria-label="select timezone">
+                    <option v-for="timezone in availableTimezones"
+                            :selected="timezone.id === currentTimeZoneId"
+                            :key="timezone.id" :value="timezone">
+                        (UTC{{ timezone.offset }}) {{ timezone.id }}, {{ timezone.name }}
+                    </option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="pt-2 mb-4 ps-4 pe-4 row" v-show="!client.timeSettings.timeZone.editMode">
+        <div>
+            <a id="update-server-timezone-button" class="btn btn-light" style="width: 100px"
+               v-on:click.prevent="toggleEditTimeZone()" href="#">
+                Change</a>
+        </div>
+    </div>
+    <div class="pt-2 mb-4 ps-4 pe-4 row" v-show="client.timeSettings.timeZone.editMode">
+        <div>
+            <a id="save-timezone-button" class="btn btn-light" style="width: 100px"
+               v-on:click.prevent="saveTimeZone()" href="#">
+                Save</a>
+            <a id="cancel-edit-timezone-button" class="btn btn-light" style="width: 100px"
+               v-on:click.prevent="cancelEditTimeZone()" href="#">
+                Cancel</a>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

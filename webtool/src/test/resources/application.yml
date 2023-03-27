@@ -1,0 +1,119 @@
+spring:
+  thymeleaf:
+    cache: false
+  jackson:
+    default-property-inclusion: non_null
+    date-format: yyyy-MM-dd HH:mm:ss
+    deserialization:
+      fail-on-unknown-properties: false
+  mvc:
+    format:
+      date-time: yyyy-MM-dd HH:mm:ss
+      date: yyyy-MM-dd
+      time: HH:mm:ss
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+logging:
+  log4j2:
+    config: classpath:log4j2.yml
+
+network-management:
+  dns:
+    default: "8.8.8.8"
+
+time:
+  ntp:
+    active:
+      filter-parameter-command: "NTP service"
+    synchronized:
+      filter-parameter-command: "System clock synchronized"
+    chrony:
+      config-file: "/etc/chrony/chrony.conf"
+
+adls:
+  client:
+    connection:
+      default:
+        namespace: http://copadata.com/zenon/OPCUA/
+    # Configuration for Variables supports wildcards using symbol '%'. Ex.: "%param", "param%", "%param%"
+    variables:
+      cache:
+        nickname:
+          timeout: 600000
+      # Site metadata is Site specific parameters later used in Site overview.
+      site-metadata:
+        - Sitename
+        - VersionNumber
+        - NumOfLights
+        - NumOfZones
+        - NumOfRadars
+        - latitude
+        - longitude
+        - Sunrise
+        - Sunset
+        - Daytime_enum
+        - Overwrite_Daytime_Enum
+        - Overwrite_Zone
+      enum-mappings:
+        - parameter-name: "Daytime_enum"
+          mappings:
+            "0": "Day"
+            "1": "Night"
+            "2": "Arctic Day"
+            "3": "Arctic Night"
+            "4": "Unknown"
+        - parameter-name: "Overwrite_Daytime_Enum"
+          mappings:
+            "0": "Auto"
+            "1": "Forced Day"
+            "2": "Forced Night"
+        - parameter-name: "Overwrite_Zone"
+          mappings:
+            "0": "Auto"
+            "1": "Forced Off"
+            "2": "Forced On"
+            "3": "Ignore"
+        - type-name: "CONNECTION_ERROR"
+          mappings:
+            #<blank>: No connection to radar
+            "0": "Connection to the radar"
+            "1": "Error in connection to the radar"
+        - type-name: "RADAR_ERROR"
+          mappings:
+            "0": "Radar is working as expected"
+            "1": "Radar is NOT working"
+        - type-name: "SurveillanceWarningZone"
+          mappings:
+            "clear": "Zone Clear"
+            "on": "Activity in zone"
+            "uncertain": "Regulatory Time"
+            "not operational / error": "Light Forced On"
+        - type-name: "ZoneStatus"
+          mappings:
+            "0": "Forced Off"
+            "1": "Forced On"
+            "2": "Safe Mode On"
+            "3": "Off"
+        - parameter-name: "ServiceMode"
+          mappings:
+            "0": "Disable"
+            "1": "Enable"
+        - type-name: "AVI_AL"
+          mappings:
+            "0": "Status OK"
+            "1": "Alarm"
+        - type-name: "AVI_ON"
+          mappings:
+            "0": "Off"
+            "1": "On"
+        - type-name: "AVI_STATUS"
+          mappings:
+            "1": "Night"
+            "2": "Twilight"
+            "3": "Day"
+            "100": "No Connection"
+            "101": "Proxy No Connection"
+            "255": "Photocell error"

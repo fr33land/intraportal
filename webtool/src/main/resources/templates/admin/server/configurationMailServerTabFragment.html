@@ -1,0 +1,45 @@
+<html xmlns=http://www.w3.org/1999/xhtml xmlns:th=http://www.thymeleaf.org>
+<body>
+
+<div th:fragment="configurationMailServer" class="tab-pane fade"
+     th:classappend="${(tab == 'config-mail-tab' ? 'active' : '') + (tab == 'config-mail-tab' ? ' show' : '')}"
+     role="tabpanel" id="config-mail-tab">
+    <br/>
+    <div id="user-edit-form" class="edit-form">
+        <form action="#" id="mail-settings-form" method="post" autocomplete="off">
+
+            <div class="mb-4 ps-4 pe-4 required">
+                <label for="host" class="form-label">Host</label>
+                <input type="text" id="host" name="host" class="form-control" v-model="client.mailSettings.host" placeholder="Server host" maxlength="250">
+            </div>
+
+            <div class="mb-4 ps-4 pe-4 required">
+                <label for="port" class="form-label">Port</label>
+                <input type="text" id="port" name="port" class="form-control" v-model="client.mailSettings.port" placeholder="Server port" autoComplete="off" maxlength="250">
+            </div>
+
+            <div class="mb-4 ps-4 pe-4 required">
+                <label for="userName" class="form-label">Username</label>
+                <input type="text" id="userName" name="username" class="form-control" v-model="client.mailSettings.userName" placeholder="User name" maxlength="128">
+            </div>
+
+            <div class="mb-4 ps-4 pe-4 required">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" name="password" class="form-control" v-model="client.mailSettings.password" maxlength="32">
+            </div>
+
+            <div class="mb-4 ps-4 pe-4">
+                <div class="row">
+                    <div class="col-sm-4 pb-4 pt-2">
+                        <input type="submit" name="save" id="save-submit" class="form-control btn btn-light" v-on:click.prevent="saveMailServerSettings()" value="Save" />
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>

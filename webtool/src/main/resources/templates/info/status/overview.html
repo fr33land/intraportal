@@ -1,0 +1,63 @@
+<html xmlns=http://www.w3.org/1999/xhtml xmlns:th=http://www.thymeleaf.org>
+<head>
+    <th:block th:include="templates/mainLayoutFragments.html :: meta"></th:block>
+    <th:block th:include="templates/mainLayoutFragments.html :: css"></th:block>
+</head>
+<body>
+
+<div class="mainLayout">
+    <div th:replace="templates/mainLayoutFragments.html :: headerLogo"></div>
+    <div th:replace="templates/mainLayoutFragments.html :: headerUser"></div>
+    <div th:replace="templates/mainLayoutFragments.html :: menuBar"></div>
+
+    <div id="content" class="content overviewContainer">
+        <div class="page-title">
+            SYSTEM INFO
+        </div>
+        <br/>
+        <h5>SOFTWARE REVISION</h5>
+        <div class="section-title" style="width: 1350px">
+            <span>Server application</span>
+        </div>
+        <div class="base-info-container" style="width: 1350px">
+            <div>
+                <span>Version: </span>
+                <span th:text="${buildVersion}"></span>
+            </div>
+            <div>
+                <span>Build Date: </span>
+                <span th:text="${buildTime}"></span>
+            </div>
+        </div>
+
+        <div class="section-title" style="width: 1350px">
+            <span>Database</span>
+        </div>
+        <div class="base-info-container" style="width: 1350px">
+            <div>
+                <span>Version no: </span>
+                <span th:text="${dbVersion}"></span>
+            </div>
+            <div>
+                <span>Version title: </span>
+                <span th:text="${dbDescription}"></span>
+            </div>
+            <div>
+                <span>Migration date: </span>
+                <span th:text="${dbMigrationDate}"></span>
+            </div>
+        </div>
+        <br/>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    const userName = /*[[${#authentication.getPrincipal().getUsername()}]]*/;
+</script>
+
+<th:block th:include="templates/mainLayoutFragments.html :: js"></th:block>
+<script th:src="@{/webjars/datatables/js/jquery.dataTables.min.js}"></script>
+<script th:src="@{/web/js/info/status/statusApplication.js}"></script>
+
+</body>
+</html>

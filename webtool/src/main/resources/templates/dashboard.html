@@ -1,0 +1,33 @@
+<html xmlns=http://www.w3.org/1999/xhtml xmlns:th=http://www.thymeleaf.org>
+<head>
+    <th:block th:include="templates/mainLayoutFragments.html :: meta"></th:block>
+    <th:block th:include="templates/mainLayoutFragments.html :: css"></th:block>
+</head>
+<body>
+
+<div class="mainLayout">
+    <div th:replace="templates/mainLayoutFragments.html :: headerLogo"></div>
+    <div th:replace="templates/mainLayoutFragments.html :: headerUser"></div>
+    <div th:replace="templates/mainLayoutFragments.html :: menuBar"></div>
+
+    <div id="content" class="content overviewContainer">
+        <div class="page-title">
+            DASHBOARD
+        </div>
+        <br/>
+        <br/>
+        <br/>
+        <div class="container" style="margin-left:0px;">
+        </div>
+    </div>
+</div>
+</div>
+
+<th:block th:include="templates/mainLayoutFragments.html :: js"></th:block>
+<script th:src="@{/webjars/datatables/js/jquery.dataTables.min.js}"></script>
+<script th:src="@{/web/js/user/usersSettingsFormApplication.js}"></script>
+<script th:src="@{/web/js/user/userSettingsFormValidation.js}"></script>
+
+</div>
+</body>
+</html>

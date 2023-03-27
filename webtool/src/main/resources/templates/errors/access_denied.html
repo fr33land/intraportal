@@ -1,0 +1,32 @@
+<html xmlns=http://www.w3.org/1999/xhtml xmlns:th=http://www.thymeleaf.org>
+<head>
+    <th:block th:include="templates/mainLayoutFragments.html :: meta"></th:block>
+    <th:block th:include="templates/mainLayoutFragments.html :: css"></th:block>
+</head>
+<body>
+
+<div class="mainLayout">
+    <div th:replace="templates/mainLayoutFragments.html :: headerLogo"></div>
+    <div th:replace="templates/mainLayoutFragments.html :: headerUser"></div>
+    <div th:replace="templates/mainLayoutFragments.html :: menuBar"></div>
+
+    <div id="content" class="content overviewContainer">
+        <div class="page-title">
+            Forbidden
+        </div>
+        <br/>
+        <br/>
+        <br/>
+        <div id="error">
+            <h5>
+                <div>
+                    <i class="fas fa-exclamation-triangle warning"></i>&nbsp;
+                    <span th:utext="${error}" th:remove="tag"></span>
+                </div>
+            </h5>
+        </div>
+    </div>
+</div>
+<th:block th:include="templates/mainLayoutFragments.html :: js"></th:block>
+</body>
+</html>

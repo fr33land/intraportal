@@ -1,0 +1,46 @@
+spring:
+  thymeleaf:
+    cache: false
+  jackson:
+    default-property-inclusion: non_null
+    date-format: yyyy-MM-dd HH:mm:ss
+    deserialization:
+      fail-on-unknown-properties: false
+  mvc:
+    format:
+      date-time: yyyy-MM-dd HH:mm:ss
+      date: yyyy-MM-dd
+      time: HH:mm:ss
+  servlet:
+    multipart:
+      max-file-size: 250MB
+      max-request-size: 400MB
+  datasource:
+    username: intraportal
+    password: 123
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/intraportaldb
+
+server:
+  tomcat:
+    max-swallow-size: -1
+
+logging:
+  log4j2:
+    config: classpath:log4j2.yml
+
+shell:
+  script-location:
+
+network-management:
+  dns:
+    default: "8.8.8.8"
+
+time:
+  ntp:
+    active:
+      filter-parameter-command: "NTP service"
+    synchronized:
+      filter-parameter-command: "System clock synchronized"
+    chrony:
+      config-file: "/etc/chrony.conf"

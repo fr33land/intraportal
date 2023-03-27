@@ -1,0 +1,109 @@
+<html xmlns=http://www.w3.org/1999/xhtml xmlns:th=http://www.thymeleaf.org>
+<head>
+    <th:block th:include="templates/mainLayoutFragments.html :: meta"></th:block>
+    <th:block th:include="templates/mainLayoutFragments.html :: css"></th:block>
+</head>
+<body>
+
+<div class="mainLayout">
+    <div th:replace="templates/mainLayoutFragments.html :: headerLogo"></div>
+    <div th:replace="templates/mainLayoutFragments.html :: headerUser"></div>
+    <div th:replace="templates/mainLayoutFragments.html :: menuBar"></div>
+
+    <div id="content" class="content overviewContainer">
+
+        <div id="server-admin">
+
+            <div class="page-title text-uppercase">
+                Server Configuration
+            </div>
+            <br/>
+            <div v-cloak v-show="apiError" class="alert alert-danger" role="alert">
+                {{ apiError }}
+            </div>
+
+            <div v-cloak th:if="${error}">
+                <div class="alert alert-danger">
+                    <span th:text="${error}" th:remove="tag"></span>
+                </div>
+            </div>
+
+            <div v-cloak v-for="timedError in timedErrors" :key="timedError.id">
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <span>{{ timedError.message }}</span>
+                    <button type="button" class="btn-close" @click="removedTimedError(timedError.id)"
+                            aria-label="Close"></button>
+                </div>
+            </div>
+
+            <div v-cloak v-for="timedInfo in timedInfoMessages" :key="timedInfo.id">
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <span>{{ timedInfo.message }}</span>
+                    <button type="button" class="btn-close" @click="removedTimedInfo(timedInfo.id)"
+                            aria-label="Close"></button>
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <ul class="nav nav-tabs" id="server-configuration-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" th:classappend="${tab == 'config-network-tab' ? 'active' : ''}"
+                                id="select-config-network-tab"
+                                data-bs-toggle="tab" data-bs-target="#config-network-tab"
+                                type="button" role="tab"
+                                aria-controls="config-network-tab" aria-selected="false">Network
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" th:classappend="${tab == 'config-ntp-tab' ? 'active' : ''}"
+                                id="select-config-ntp-tab"
+                                data-bs-toggle="tab" data-bs-target="#config-ntp-tab"
+                                type="button" role="tab"
+                                aria-controls="config-ntp-tab" aria-selected="true">Time
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" th:classappend="${tab == 'config-mail-tab' ? 'active' : ''}"
+                                id="select-config-mail-tab"
+                                data-bs-toggle="tab" data-bs-target="#config-mail-tab"
+                                type="button" role="tab"
+                                aria-controls="config-mail-tab" aria-selected="false">Mail server
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="server-configuration-tab-content">
+                    <div th:replace="templates/admin/server/configurationNtpTabFragment.html :: configurationNtp"></div>
+                    <div th:replace="templates/admin/server/configurationNetworkTabFragment.html :: configurationNetwork"></div>
+                    <div th:replace="templates/admin/server/configurationMailServerTabFragment.html :: configurationMailServer"></div>
+                </div>
+            </div>
+
+            <input type="hidden" ref="csrf" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+        </div>
+
+    </div>
+</div>
+
+<th:block th:include="templates/mainLayoutFragments.html :: js"></th:block>
+<script th:inline="javascript">
+    var availableTimezones = [[${availableTimezones}]];
+
+    var datePickerId = 'manual-set-date-time';
+    var datePickerIdSelector = `#${datePickerId}`;
+    var startDatePicker = [[${startDatePicker}]];
+    var startMoment = moment(startDatePicker);
+
+    var adapterSettings = [[${adapterSettings}]];
+    var adaptersReadError = [[${adaptersReadError}]];
+
+    var javaLocalAddress = [[${javaLocalAddress}]];
+</script>
+<script th:src="@{/web/js/admin/server/networkAdapterComponent.js}"></script>
+<script th:src="@{/web/js/admin/server/ntpServerComponent.js}"></script>
+<script th:src="@{/web/js/admin/server/serverAdminApplication.js}"></script>
+<script th:src="@{/web/js/admin/server/serverSettingsFormValidation.js}"></script>
+<script th:src="@{/web/js/admin/server/serverTimeDatePicker.js}"></script>
+
+</body>
+</html>

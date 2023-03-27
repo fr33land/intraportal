@@ -1,0 +1,59 @@
+<html xmlns=http://www.w3.org/1999/xhtml xmlns:th=http://www.thymeleaf.org>
+<head>
+    <th:block th:include="templates/mainLayoutFragments.html :: meta"></th:block>
+    <th:block th:include="templates/mainLayoutFragments.html :: css"></th:block>
+</head>
+<body>
+
+<div class="mainLayout">
+    <div th:replace="templates/mainLayoutFragments.html :: headerLogo"></div>
+    <div th:replace="templates/mainLayoutFragments.html :: headerUser"></div>
+    <div th:replace="templates/mainLayoutFragments.html :: menuBar"></div>
+
+    <div id="content" class="content overviewContainer">
+        <div class="page-title">
+            USERS
+        </div>
+        </br>
+
+        <div v-cloak v-show="apiError" class="alert alert-danger" role="alert">
+            {{ apiError }}
+        </div>
+
+        <div v-cloak th:if="${message}">
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <span v-cloak th:text="${message}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+        <div v-cloak th:if="${error}">
+            <div class="alert alert-danger">
+                <span v-cloak th:text="${error}" th:remove="tag"></span>
+            </div>
+        </div>
+        <table class="table table-hover editable-table" id="users-table">
+            <thead class="thead-dark">
+            <tr>
+                <th>Id</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Last Name</th>
+                <th>Last login</th>
+            </tr>
+            </thead>
+        </table>
+        <br/>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    const userName = /*[[${#authentication.getPrincipal().getUsername()}]]*/;
+</script>
+
+<th:block th:include="templates/mainLayoutFragments.html :: js"></th:block>
+<script th:src="@{/webjars/datatables/js/jquery.dataTables.min.js}"></script>
+<script th:src="@{/web/js/admin/users/usersApplication.js}"></script>
+
+</body>
+</html>

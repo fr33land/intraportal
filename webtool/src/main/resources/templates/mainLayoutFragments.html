@@ -1,0 +1,91 @@
+<html xmlns=http://www.w3.org/1999/xhtml xmlns:th=http://www.thymeleaf.org>
+<body>
+
+<div th:fragment="meta">
+    <meta name="description" content=""/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <link rel="icon" type="image/png" th:href="@{/images/favicon.png}" />
+</div>
+
+<div th:fragment="css">
+    <link type="text/css" th:href="@{/webjars/font-awesome/css/all.min.css}" rel="stylesheet"/>
+    <link type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link type="text/css" th:href="@{/webjars/bootstrap-daterangepicker/css/bootstrap-daterangepicker.css}" rel="stylesheet"/>
+    <link type="text/css" th:href="@{/web/css/style.css}" rel="stylesheet"/>
+</div>
+
+<div th:fragment="js">
+    <script th:src="@{/webjars/popper.js/umd/popper.js}"></script>
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script th:src="@{/webjars/vue/vue.min.js}"></script>
+    <script th:src="@{/webjars/axios/dist/axios.min.js}"></script>
+    <script th:src="@{/webjars/lodash/lodash.js}"></script>
+    <script th:src="@{/webjars/momentjs/min/moment.min.js}"></script>
+    <script th:src="@{/webjars/jquery-validation/jquery.validate.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap-daterangepicker/js/bootstrap-daterangepicker.js}"></script>
+    <script th:src="@{/web/js/jquery.validator.utils.js}"></script>
+    <script th:src="@{/web/js/utils.js}"></script>
+    <script th:src="@{/web/js/clock.js}"></script>
+
+    <script type="text/javascript">
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content')
+            }
+        });
+
+        let token = document.head.querySelector('meta[name="_csrf"]');
+        window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+    </script>
+</div>
+
+
+<div class="headerLogo" th:fragment="headerLogo">
+    <a th:href="@{/web/home}">
+        <img th:src="@{/web/images/logo-header.png}" class="header-logo"/>
+    </a>
+</div>
+
+<div class="headerUser" th:fragment="headerUser">
+    <div class="d-flex justify-content-end">
+
+        <div id="system-clock" class="pe-3">
+            <div v-cloak v-show="systemDateTime" class="d-flex justify-content-center">{{ systemDateTime | formatDate }}</div>
+            <div v-cloak v-show="systemDateTime" class="d-flex justify-content-center">{{ systemDateTime | formatTime(timeFormat) }}</div>
+        </div>
+
+        <form id="logout-form" th:action="@{/web/logout}" method="POST">
+            Hi <span th:text="${#authentication.getPrincipal().getFirstName()}"></span>&nbsp
+
+            <div class="btn-group">
+                <div class="dropdown">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuUser" data-toggle="dropdown"
+                            aria-haspopup="true" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-user" style="font-family: 'Font Awesome\ 5 Free'"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start " aria-labelledby="dropdownMenuUser">
+                        <a class="dropdown-item" th:href="@{/web/user/settings}">Settings</a>
+                        <input class="dropdown-item" type="submit" value="Log out">
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<div class="headerUser" th:fragment="headerLogout">
+    <form id="logout-form" th:action="@{/web/logout}" method="POST">
+        <input class="btn btn-light" type="submit" value="Log out">
+    </form>
+</div>
+
+<div class="menuBar" th:fragment="menuBar">
+    <div th:replace="templates/menuFragment.html :: menu"></div>
+</div>
+
+</body>
+</html>

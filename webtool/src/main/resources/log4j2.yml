@@ -1,0 +1,48 @@
+Configuration:
+  status: warn
+
+  Properties:
+    Property:
+      - name: log-path
+        value: ${sys:LOG_PATH}
+      - name: service-name
+        value: intraportal
+
+  Appenders:
+    Console:
+      name: Console_Appender
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: "%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSSXXX}} ${LOG_LEVEL_PATTERN:-%-5level} [${service-name},%X{traceId},%X{spanId},%X{spanExportable}] ${sys:PID} --- [%15.15t] %-40.40C{1.} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+
+#"\"yyyy-MM-dd'T'HH:mm:ss,SSSXXX\", UTC"
+    RollingFile:
+      name: File_Appender
+      fileName: "${log-path}/${service-name}-log.log"
+      filePattern: "${log-path}/archive/${service-name}-log.log.%d{yyyy-MM-dd}.gz"
+      PatternLayout:
+        pattern: "%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSSXXX}} ${LOG_LEVEL_PATTERN:-%-5level} [${service-name},%X{traceId},%X{spanId},%X{spanExportable}] ${sys:PID} --- [%15.15t] %-40.40C{1.} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+      Policies:
+        TimeBasedTriggeringPolicy:
+          interval: 1
+          modulate: true
+
+  Loggers:
+    Logger:
+      - name: org.intraportal
+        level: info
+        additivity: false
+        AppenderRef:
+          - ref: Console_Appender
+          - ref: File_Appender
+      - name: org.springframework
+        level: error
+        additivity: false
+        AppenderRef:
+          - ref: Console_Appender
+          - ref: File_Appender
+    Root:
+      level: info
+      AppenderRef:
+        - ref: Console_Appender
+        - ref: File_Appender

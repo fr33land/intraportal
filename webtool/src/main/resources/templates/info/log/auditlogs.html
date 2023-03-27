@@ -1,0 +1,57 @@
+<html xmlns=http://www.w3.org/1999/xhtml xmlns:th=http://www.thymeleaf.org>
+<head>
+    <th:block th:include="templates/mainLayoutFragments.html :: meta"></th:block>
+    <th:block th:include="templates/mainLayoutFragments.html :: css"></th:block>
+</head>
+<body>
+
+<div class="mainLayout">
+    <div th:replace="templates/mainLayoutFragments.html :: headerLogo"></div>
+    <div th:replace="templates/mainLayoutFragments.html :: headerUser"></div>
+    <div th:replace="templates/mainLayoutFragments.html :: menuBar"></div>
+
+    <div id="content" class="content overviewContainer">
+
+        <div class="page-title text-uppercase">
+            History
+        </div>
+
+        <br/>
+        <h5>ACTIONS</h5>
+        <table id="action-log-table" class="table table-hover" style="width: 1420px">
+            <thead class="thead-dark">
+            <tr>
+                <th>User</th>
+                <th>Domain</th>
+                <th>Action</th>
+                <th>Session Id</th>
+                <th>Date</th>
+                <th></th>
+            </tr>
+            </thead>
+        </table>
+
+        <br/>
+        <h5>SESSIONS</h5>
+        <table id="session-log-table" class="table table-hover" style="width: 1420px">
+            <thead class="thead-dark">
+            <tr>
+                <th>User</th>
+                <th>Action</th>
+                <th>Session Id</th>
+                <th>Date</th>
+                <th></th>
+            </tr>
+            </thead>
+        </table>
+        <br/>
+        <br/>
+    </div>
+</div>
+
+<th:block th:include="templates/mainLayoutFragments.html :: js"></th:block>
+<script th:src="@{/webjars/datatables/js/jquery.dataTables.min.js}"></script>
+<script th:src="@{/web/js/info/log/auditLogsApplication.js}"></script>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<html xmlns=http://www.w3.org/1999/xhtml xmlns:th=http://www.thymeleaf.org xmlns:sec="http://www.w3.org/1999/xhtml">
+<body>
+<div th:fragment="menu">
+    <ul class="menuList">
+        <li>
+            <a th:href="@{/web/dashboard}" class="cleanAnchor">
+                <span class="menuHeaderItem">Dashboard</span>
+            </a>
+        </li>
+        <li class="menuSpacer">
+        </li>
+        <li>
+            <a th:href="@{/web/info/status}" class="cleanAnchor">
+                <span class="menuHeaderItem">SYSTEM INFO</span>
+            </a>
+        </li>
+
+        <li class="menuSpacer">
+        </li>
+
+        <li sec:authorize="hasAuthority('ADMIN')">
+            <div class="menuHeaderItem">ADMINISTRATION</div>
+            <ul>
+                <li>
+                    <a th:href="@{/web/admin/users}" class="cleanAnchor">
+                        <span class="menuItem">USERS</span>
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/web/admin/server}" class="cleanAnchor">
+                        <span class="menuItem">SERVER</span>
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/web/audit/log}" class="cleanAnchor">
+                        <span class="menuItem">HISTORY</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="menuSpacer">
+        </li>
+    </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,307 @@
+<html xmlns=http://www.w3.org/1999/xhtml xmlns:th=http://www.thymeleaf.org>
+<head>
+    <th:block th:include="templates/mainLayoutFragments.html :: meta"></th:block>
+    <th:block th:include="templates/mainLayoutFragments.html :: css"></th:block>
+</head>
+<body>
+
+<div class="mainLayout">
+    <div th:replace="templates/mainLayoutFragments.html :: headerLogo"></div>
+    <div th:replace="templates/mainLayoutFragments.html :: headerUser"></div>
+    <div th:replace="templates/mainLayoutFragments.html :: menuBar"></div>
+
+    <div id="content" class="content overviewContainer">
+        <div th:replace="templates/modalFragments.html :: modalDeleteConfirmation(title = 'Delete user', message = 'Are you sure you want to permanently delete this user?')"></div>
+        <br/>
+        <div>
+            <a href="/web/admin/users" class="btn btn-back">
+                <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                <span>Back</span>
+            </a>
+        </div>
+        <div>
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" th:classappend="${tab == 'user-info' ? 'active' : ''}"
+                            id="user-info-tab"
+                            data-bs-toggle="tab" data-bs-target="#user-info" type="button" role="tab"
+                            aria-controls="user-info" aria-selected="true">User info
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" th:classappend="${tab == 'user-password' ? 'active' : ''}"
+                            id="user-password-tab" data-bs-toggle="tab" data-bs-target="#user-password"
+                            type="button"
+                            role="tab" aria-controls="user-password" aria-selected="false">Password
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" th:classappend="${tab == 'user-roles' ? 'active' : ''}"
+                            id="user-roles-tab"
+                            data-bs-toggle="tab" data-bs-target="#user-roles" type="button" role="tab"
+                            aria-controls="user-roles" aria-selected="false">Roles
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation" v-on:click="showUserLogs()">
+                    <button class="nav-link" th:classappend="${tab == 'user-logs' ? 'active' : ''}"
+                            id="user-logs-tab"
+                            data-bs-toggle="tab" data-bs-target="#user-logs" type="button" role="tab"
+                            aria-controls="user-logs" aria-selected="false">User history
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="userTabContent">
+                <div class="tab-pane fade"
+                     th:classappend="${(tab == 'user-info' ? 'active' : '') + (tab == 'user-info' ? ' show' : '')}"
+                     role="tabpanel" id="user-info">
+                    <div id="user-edit-holder" class="edit-form">
+                        <form action="#" th:action="@{/web/admin/users/save}" th:object="${user}" method="post"
+                              id="user-edit-form"
+                              ref="form"
+                              autocomplete="off">
+                            </br>
+                            <div th:if="${userMessage}">
+                                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                    <span th:text="${userMessage}"></span>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                </div>
+                            </div>
+                            <div class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}"
+                                 th:each="error : ${#fields.errors('global')}" th:utext="${error}"></div>
+                            <input type="hidden" id="id" th:field="*{id}" name="id"/>
+                            <input type="hidden" id="user" th:field="*{username}" name="username" th:if="${edit}"/>
+                            <input type="hidden" id="hemail" th:value="${user.email}" name="hemail" th:if="${edit}"/>
+
+                            <div class="mb-4 ps-4 pe-4 required">
+                                <label for="username" class="form-label">User name</label>
+                                <input type="text" th:field="*{username}" id="username" class="form-control"
+                                       placeholder="User name"
+                                       th:disabled="${edit}" autoComplete="new-password" maxlength="250">
+                                <span th:if="${#fields.hasErrors('username')}" th:errorclass="error"
+                                      th:errors="*{username}" th:class="is-invalid"></span>
+                            </div>
+
+                            <div class="mb-4 ps-4 pe-4 required">
+                                <label for="email" class="form-label">Email address</label>
+                                <input type="text" th:field="*{email}" id="email" class="form-control"
+                                       placeholder="Email address" autoComplete="off" maxlength="250">
+                                <span th:if="${#fields.hasErrors('email')}" th:errorclass="error"
+                                      th:errors="*{email}" th:class="is-invalid"></span>
+                            </div>
+
+                            <div class="mb-4 ps-4 pe-4 required">
+                                <label for="firstName" class="form-label">Name</label>
+                                <input type="text" th:field="*{firstName}" id="firstName" class="form-control"
+                                       placeholder="Name" maxlength="250">
+                                <span th:if="${#fields.hasErrors('firstName')}" th:errorclass="error"
+                                      th:errors="*{firstName}" th:class="is-invalid"></span>
+                            </div>
+
+                            <div class="mb-4 ps-4 pe-4 required">
+                                <label for="lastName" class="form-label">Last name</label>
+                                <input type="text" th:field="*{lastName}" id="lastName" class="form-control"
+                                       placeholder="Last name" autoComplete="new-password" maxlength="250">
+                                <span th:if="${#fields.hasErrors('lastName')}" th:errorclass="error"
+                                      th:errors="*{lastName}" th:class="is-invalid"></span>
+                            </div>
+
+                            <div class="mb-4 ps-4 pe-4">
+                                <label for="enabled" class="form-label">User status</label>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox"
+                                           role="switch"
+                                           th:field="*{enabled}"
+                                           v-on:change="enableUser($event)"
+                                           id="enabled">
+                                    <label class="form-check-label" id="enabled-label" for="enabled">
+                                        <span th:if="${user.enabled}" th:remove="tag">
+                                            Activated
+                                        </span>
+                                        <span th:unless="${user.enabled}" th:remove="tag">
+                                            Deactivated
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="mb-4 ps-4 pe-4" th:if="${edit}">
+                                <label for="lastLogin" class="form-label">Last login</label>
+                                <input type="text" th:field="*{lastLogin}" id="lastLogin" class="form-control"
+                                       readonly>
+                            </div>
+
+                            <div class="mb-4 ps-4 pe-4" th:if="${edit}">
+                                <label for="created" class="form-label">Date created</label>
+                                <input type="text" th:field="*{created}" id="created" class="form-control" readonly>
+                            </div>
+
+                            <div class="mb-4 ps-4 pe-4">
+                                <div class="row">
+                                    <div class="col-sm-4 pb-4 pt-2">
+                                        <input type="submit" name="save" id="save-submit"
+                                               class="form-control btn btn-light"
+                                               value="Save" th:if="${edit}"/>
+                                        <input type="submit" name="create" id="create-submit"
+                                               class="form-control btn btn-light"
+                                               value="Create" th:if="${create}"/>
+                                    </div>
+                                    <div class="col-sm-4 pb-4 pt-2">
+                                        <input formnovalidate="formnovalidate" type="submit" name="cancel"
+                                               id="cancel-submit"
+                                               class="form-control btn btn-light" value="Cancel"/>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-4 pb-4 pt-2">
+                                        <input type="button" name="delete" id="delete-submit"
+                                               class="form-control btn btn-blue"
+                                               value="Delete" th:if="${edit}"/>
+                                    </div>
+                                    <div class="col-sm-4 pb-4 pt-2">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="tab-pane fade"
+                     th:classappend="${(tab == 'user-password' ? 'active' : '') + (tab == 'user-password' ? ' show' : '')}"
+                     role="tabpanel" id="user-password">
+                    <div id="user-password-holder" class="edit-form">
+                        <form action="#" th:action="@{/web/admin/users/passwd/change}" th:object="${password}"
+                              method="post"
+                              id="user-password-form"
+                              autocomplete="off">
+                            </br>
+                            <div th:if="${passwordMessage}">
+                                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                    <span th:text="${passwordMessage}"></span>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                </div>
+                            </div>
+                            <div class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}"
+                                 th:each="error : ${#fields.errors('global')}" th:utext="${error}"></div>
+                            <input type="hidden" id="userId" th:field="*{userId}" name="userId"/>
+
+                            <div class="mb-4 ps-4 pe-4 required">
+                                <label for="passwordFirst" class="form-label">Password</label>
+                                <input type="password" th:field="*{passwordFirst}" id="passwordFirst"
+                                       class="form-control"
+                                       placeholder="Enter password" autoComplete="new-password" maxlength="250">
+                                <span th:if="${#fields.hasErrors('passwordFirst')}" th:errorclass="error"
+                                      th:errors="*{passwordFirst}" th:class="is-invalid"></span>
+                            </div>
+
+                            <div class="mb-4 ps-4 pe-4 required">
+                                <label for="passwordSecond" class="form-label">Re-enter password</label>
+                                <input type="password" th:field="*{passwordSecond}" id="passwordSecond"
+                                       class="form-control"
+                                       placeholder="Confirm password" autoComplete="new-password" maxlength="250">
+                                <span th:if="${#fields.hasErrors('passwordSecond')}" th:errorclass="error"
+                                      th:errors="*{passwordSecond}" th:class="is-invalid"></span>
+                            </div>
+
+                            <div class="mb-4 ps-4 pe-4">
+                                <div class="row">
+                                    <div class="col-sm-6 pb-4 pt-2">
+                                        <input type="submit" name="change" id="change-password-submit"
+                                               class="form-control btn btn-light"
+                                               value="Change password"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="tab-pane fade"
+                     th:classappend="${(tab == 'user-roles' ? 'active' : '') + (tab == 'user-roles' ? ' show' : '')}"
+                     role="tabpanel" id="user-roles">
+                    <div id="user-roles-holder" class="edit-form">
+                        <form action="#" th:action="@{/web/admin/users/roles/update}" th:object="${roles}"
+                              method="post"
+                              id="user-roles-form"
+                              autocomplete="off">
+                            </br>
+                            <div th:if="${rolesMessage}">
+                                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                    <span th:text="${rolesMessage}"></span>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                </div>
+                            </div>
+                            <div class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}"
+                                 th:each="error : ${#fields.errors('global')}" th:utext="${error}"></div>
+                            <input type="hidden" id="userId_hidden" th:field="*{userId}" name="userId"/>
+
+                            <div class="form-check pb-4 pt-2 pl-1">
+                                <ul style="list-style-type:none;">
+                                    <li th:each="item, stat : *{list}">
+                                        <input class="form-check-input" type="checkbox"
+                                               th:field="*{list[__${stat.index}__].checked}"
+                                               th:text="${item.description}"
+                                               th:value="${item.id}"/>
+                                        <input type="hidden" th:field="*{list[__${stat.index}__].id}"/>
+                                        <input type="hidden" th:field="*{list[__${stat.index}__].name}"/>
+                                        <input type="hidden" th:field="*{list[__${stat.index}__].description}"/>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6 pb-4 pt-2">
+                                    <input type="submit" name="update" id="update-roles-submit"
+                                           class="form-control btn btn-light"
+                                           value="Update roles"/>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+                <div class="tab-pane fade"
+                     th:classappend="${(tab == 'user-logs' ? 'active' : '') + (tab == 'user-logs' ? ' show' : '')}"
+                     role="tabpanel" id="user-logs">
+                    <div id="user-logs-holder">
+                        <br/>
+                        <h5>ACTIONS</h5>
+                        <table class="table table-hover" id="user-action-logs-table" style="width: 1300px">
+                            <thead class="thead-dark">
+                            <tr>
+                                <th>Domain</th>
+                                <th>Action</th>
+                                <th>Session Id</th>
+                                <th style="width: 200px">Date</th>
+                                <th style="width: 60px"></th>
+                            </tr>
+                            </thead>
+                        </table>
+                        <br/>
+                        <br/>
+                        <h5>SESSIONS</h5>
+                        <table class="table table-hover" id="user-session-logs-table" style="width: 1300px">
+                            <thead class="thead-dark">
+                            <tr>
+                                <th>Action</th>
+                                <th>Session Id</th>
+                                <th style="width: 200px">Date</th>
+                                <th style="width: 60px"></th>
+                            </tr>
+                            </thead>
+                        </table>
+                        <br/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:include="templates/mainLayoutFragments.html :: js"></th:block>
+    <script th:src="@{/webjars/datatables/js/jquery.dataTables.min.js}"></script>
+    <script th:src="@{/web/js/admin/users/usersFormApplication.js}"></script>
+    <script th:src="@{/web/js/admin/users/usersFormValidation.js}"></script>
+
+</body>
+</html>

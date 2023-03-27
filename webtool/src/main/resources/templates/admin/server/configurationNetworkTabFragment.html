@@ -1,0 +1,81 @@
+<html xmlns=http://www.w3.org/1999/xhtml xmlns:th=http://www.thymeleaf.org>
+<body>
+
+<div th:fragment="configurationNetwork" class="tab-pane fade"
+     th:classappend="${(tab == 'config-network-tab' ? 'active' : '') + (tab == 'config-network-tab' ? ' show' : '')}"
+     role="tabpanel" id="config-network-tab">
+
+    <div th:replace="templates/modalFragments.html :: modalConfirmation(title = 'Network settings will be updated', message = 'Are you sure you want to continue?')"></div>
+
+    <div class="pt-4 row" :class="!client.network.editMode ? 'mb-2' : ''">
+        <div class="col-6">
+            <table id="adapter-details-table" class="table table-hover">
+                <thead class="thead-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>IP Address</th>
+                    <th>Subnet Mask</th>
+                    <th>Default Gateway</th>
+                    <th>DNS</th>
+                    <th v-if="!client.network.editMode">Actions</th>
+                </tr>
+                </thead>
+                <tr is="adapter-details-row" v-for="(adapter, index) in adapterSettings"
+                    :key="adapter.name"
+                    :index="index" :adapter="adapter"
+                    :edit="client.network.editMode">
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="pt-4 ps-4 pe-4" v-show="client.network.editMode">
+        <label class="info-text form-label">IP Address</label>
+        <input id="ip-address-input" type="text"
+               class="form-control"
+               v-model="client.network.ipAddress"
+               :maxlength="15"
+               autoComplete="new-ip-address" placeholder="IP Address">
+    </div>
+    <div class="pt-2 ps-4 pe-4" v-show="client.network.editMode">
+        <label class="info-text form-label">Subnet Mask </label>
+        <input id="subnet-mask-input" v-model="client.network.subnetMask"
+               :maxlength="15"
+               class="form-control" placeholder="Subnet Mask"/>
+    </div>
+    <div class="pt-2 ps-4 pe-4" v-show="client.network.editMode">
+        <label class="info-text form-label">Default Gateway </label>
+        <input id="gateway-input" v-model="client.network.gateway"
+               :maxlength="100"
+               class="form-control" placeholder="Default Gateway"/>
+    </div>
+    <div class="pt-4 ps-4 pe-4" v-show="client.network.editMode">
+        <label class="info-text form-label">Set DNS manually</label>
+        <div class="form-check form-switch">
+            <input id="manual-dns-checkbox" type="checkbox"
+                   class="form-check-input shadow-none" role="switch"
+                   v-model="client.network.manualDns" @click="$event.target.blur()">
+        </div>
+    </div>
+    <div class="pt-2 ps-4 pe-4" v-show="client.network.editMode">
+        <label class="info-text form-label">DNS </label>
+        <input id="dns-input" v-model="client.network.dns"
+               :maxlength="15"
+               :disabled="!client.network.manualDns"
+               class="form-control" placeholder="DNS address"/>
+    </div>
+    <div class="pt-4 mb-4 row" v-show="client.network.editMode">
+        <div>
+            <a id="save-ntp-address-button" class="btn btn-light" style="width: 100px"
+               v-on:click.prevent="confirmSaveNetworkAdapter()" href="#">
+                Save</a>
+            <a id="cancel-edit-ntp-address-button" class="btn btn-light" style="width: 100px"
+               v-on:click.prevent="cancelEditNetworkAdapter()" href="#">
+                Cancel</a>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

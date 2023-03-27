@@ -1,0 +1,105 @@
+<html xmlns=http://www.w3.org/1999/xhtml xmlns:th=http://www.thymeleaf.org>
+<head>
+    <th:block th:include="templates/mainLayoutFragments.html :: meta"></th:block>
+    <th:block th:include="templates/mainLayoutFragments.html :: css"></th:block>
+</head>
+<body>
+
+<div class="mainLayout">
+    <div th:replace="templates/mainLayoutFragments.html :: headerLogo"></div>
+    <div th:replace="templates/mainLayoutFragments.html :: headerUser"></div>
+    <div th:replace="templates/mainLayoutFragments.html :: menuBar"></div>
+
+    <div id="content" class="content overviewContainer">
+        <div class="page-title">
+            NEW USER
+        </div>
+        <br/>
+        <div id="user-edit-form" class="edit-form">
+            <form action="#" id="user-create-form" th:action="@{/web/admin/users/save}" th:object="${user}" method="post" autocomplete="off">
+                <div class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}"
+                     th:each="error : ${#fields.errors('global')}" th:text="${error}"></div>
+                <input type="hidden" id="id" th:field="*{id}" name="id"/>
+                <input type="hidden" id="user" th:field="*{username}" name="username" th:if="${edit}"/>
+
+                <div class="mb-4 ps-4 pe-4 required">
+                    <label for="username" class="form-label">User name</label>
+                    <input type="text" th:field="*{username}" id="username" class="form-control" placeholder="User name"
+                           th:disabled="${edit}" autoComplete="new-password" maxlength="250">
+                    <span th:if="${#fields.hasErrors('username')}" th:errorclass="error" th:errors="*{username}"></span>
+                </div>
+
+                <div class="mb-4 ps-4 pe-4 required">
+                    <label for="email" class="form-label">Email address</label>
+                    <input type="text" th:field="*{email}" id="email" class="form-control" placeholder="Email address" autoComplete="off" maxlength="250">
+                    <span th:if="${#fields.hasErrors('email')}" th:errorclass="error" th:errors="*{email}"></span>
+                </div>
+
+                <div class="mb-4 ps-4 pe-4 required">
+                    <label for="firstName" class="form-label">Name</label>
+                    <input type="text" th:field="*{firstName}" id="firstName" class="form-control"
+                           placeholder="Name" autoComplete="new-password" maxlength="250">
+                    <span th:if="${#fields.hasErrors('firstName')}" th:errorclass="error" th:errors="*{firstName}"></span>
+                </div>
+
+                <div class="mb-4 ps-4 pe-4 required">
+                    <label for="lastName" class="form-label">Last name</label>
+                    <input type="text" th:field="*{lastName}" id="lastName" class="form-control"
+                           placeholder="Last name" autoComplete="new-password" maxlength="250">
+                    <span th:if="${#fields.hasErrors('lastName')}" th:errorclass="error" th:errors="*{lastName}"></span>
+                </div>
+
+                <div class="mb-4 ps-4 pe-4 required" th:if="${create}">
+                    <label for="passwordFirst" class="form-label">Password</label>
+                    <input type="password" th:field="*{passwordFirst}" id="passwordFirst" class="form-control"
+                           placeholder="Enter password" autoComplete="new-password" maxlength="250">
+                    <span th:if="${#fields.hasErrors('passwordFirst')}" th:errorclass="error" th:errors="*{passwordFirst}"></span>
+                </div>
+
+                <div class="mb-4 ps-4 pe-4 required" th:if="${create}">
+                    <label for="passwordSecond" class="form-label">Re-enter password</label>
+                    <input type="password" th:field="*{passwordSecond}" id="passwordSecond" class="form-control"
+                           placeholder="Confirm password" autoComplete="new-password" maxlength="250">
+                    <span th:if="${#fields.hasErrors('passwordSecond')}" th:errorclass="error" th:errors="*{passwordSecond}"></span>
+                </div>
+
+                <div class="mb-4 ps-4 pe-4">
+                    <input class="form-check-input" type="checkbox" th:field="*{enabled}" value="" id="enabled">
+                    <label class="form-check-label" for="enabled">
+                        Login enabled
+                    </label>
+                </div>
+
+                <div class="mb-4 ps-4 pe-4" th:if="${edit}">
+                    <label for="lastLogin" class="form-label">Last login</label>
+                    <input type="text" th:field="*{lastLogin}" id="lastLogin" class="form-control" readonly>
+                </div>
+
+                <div class="mb-4 ps-4 pe-4" th:if="${edit}">
+                    <label for="created" class="form-label">Date created</label>
+                    <input type="text" th:field="*{created}" id="created" class="form-control" readonly>
+                </div>
+
+                <div class="mb-4 ps-4 pe-4">
+                    <div class="row">
+                        <div class="col-sm-4 pb-4 pt-2">
+                            <input type="submit" name="save" id="save-submit" class="form-control btn btn-light" value="Save" th:if="${edit}" />
+                            <input type="submit" name="create" id="save-submit" class="form-control btn btn-light" value="Create" th:if="${create}" />
+                        </div>
+                        <div class="col-sm-4 pb-4 pt-2">
+                            <input formnovalidate="formnovalidate" type="submit" name="cancel" id="cancel-submit" class="form-control btn btn-light" value="Cancel" />
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="templates/mainLayoutFragments.html :: js"></th:block>
+<script th:src="@{/webjars/datatables/js/jquery.dataTables.min.js}"></script>
+<script th:src="@{/web/js/admin/users/usersFormValidation.js}"></script>
+
+</body>
+</html>

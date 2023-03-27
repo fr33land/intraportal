@@ -1,0 +1,216 @@
+<html xmlns=http://www.w3.org/1999/xhtml xmlns:th=http://www.thymeleaf.org>
+<body>
+
+<div class="modalDeleteConfirmation" th:fragment="modalDeleteConfirmation (title, message)">
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalTitle"><span th:text="${title}">title</span></h5>
+                    <button type="button" class="close btn btn-light" v-on:click.prevent="cancelDialog()"
+                            data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <span th:text="${message}" th:remove="tag">message</span>
+                    <div v-if="additionalInfo">
+                        <span v-html="additionalInfo"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" v-on:click.prevent="cancelDialog()"
+                            data-dismiss="modal">
+                        No
+                    </button>
+                    <button type="button" class="btn btn-light" v-on:click.prevent="confirmDelete(recordId)">
+                        Yes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modalConfirmation" th:fragment="modalConfirmation (title, message)">
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalTitle"><span th:text="${title}">title</span></h5>
+                    <button type="button" class="close btn btn-light" v-on:click.prevent="cancelDialog()"
+                            data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <span th:text="${message}" th:remove="tag">message</span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" v-on:click.prevent="cancelDialog()"
+                            data-dismiss="modal">
+                        No
+                    </button>
+                    <button type="button" class="btn btn-light" v-on:click.prevent="confirmAction()">
+                        Yes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modalmessage" th:fragment="modalMessage (title, message)">
+    <div class="modal fade" id="messageModal" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="messageModalTitle"><span th:text="${title}">title</span></h5>
+                </div>
+                <div class="modal-body">
+                    <span th:text="${message}" th:remove="tag">message</span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" v-on:click.prevent="closeDialog()">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="modalFileUpload(title, uploadButtonLabel, extensions)" id="file-upload-modal"
+     class="modal fade" tabindex="-1" role="dialog"
+     aria-labelledby="modalFileUploadLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="file-upload-modal-title"><span th:text="${title}">title</span></h5>
+                <button type="button" class="close btn btn-light" v-on:click.prevent="closeUploadDialog()"
+                        data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div v-for="resultEntry in uploadResults.results"
+                     class="alert" role="alert"
+                     :class="resultEntry.error ? 'alert-danger' : 'alert-success'"
+                     :key="resultEntry.message">
+                    {{ resultEntry.message }}
+                </div>
+
+                <form enctype="multipart/form-data">
+                    <div class="mt-3">
+                        <input type="file" ref="uploadFile" id="upload-file-input" @change="selectFile"
+                               th:accept="${extensions}"
+                               class="form-control-file">
+                    </div>
+                </form>
+                <form enctype="multipart/form-data">
+                    <div class="mt-3">
+                        {{ selectedFileLabel }}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" v-on:click.prevent="closeUploadDialog()"
+                        data-dismiss="modal">
+                    Close
+                </button>
+                <button type="button" v-on:click.prevent="uploadAction()" class="btn btn-light"
+                        :class="uploadButtonDisabled ? 'disabled' : ''" :aria-disabled="uploadButtonDisabled">
+                    [[${uploadButtonLabel}]]
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="modalOperationProgress(title, message, buttonLabel)" id="operation-progress-modal"
+     class="modal fade" tabindex="-1" role="dialog"
+     aria-labelledby="modalOperationProgressLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="operation-modal-title"><span th:text="${title}">title</span></h5>
+                <button type="button" id="progress-close-button-upper" class="close btn btn-light"
+                        v-on:click.prevent="closeOperationProgressDialog()"
+                        data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning" role="alert">
+                    <span th:utext="${message}" th:remove="tag">message</span>
+                </div>
+                <div class="progress" style="display: none;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                         style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%
+                    </div>
+                </div>
+                <div class="progress-bar-operation" style="display: none;">
+                    <div class="progress-bar-operation-message"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="progress-close-button" class="btn btn-secondary"
+                        v-on:click.prevent="closeOperationProgressDialog()"
+                        data-dismiss="modal">
+                    Close
+                </button>
+                <button type="button" id="progress-button" v-on:click.prevent="executeOperationProgressAction()"
+                        class="btn btn-light"
+                        :class="operationButtonDisabled ? 'disabled' : ''" :aria-disabled="operationButtonDisabled">
+                    [[${buttonLabel}]]
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="modalErrorNotFound(backURL, message, toggled)">
+    <div id="record-not-found-modal" class="modal fade"
+         data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="modalErrorNotFoundLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalErrorNotFoundLabel">Error</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger" role="alert">
+                        <span th:text="${message}" th:remove="tag">Record not found</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div>
+                        <a th:href="${backURL}" class="btn btn-back">
+                            <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                            <span>Back</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${toggled}">
+        <script th:inline="javascript">
+            window.addEventListener('load', (event) => {
+                $('#record-not-found-modal').modal('show');
+            });
+        </script>
+    </div>
+</div>
+
+</body>
+</html>
